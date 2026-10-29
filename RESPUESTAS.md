@@ -48,11 +48,26 @@ export const options = {
     { duration: '1m', target: 0 },
 
 ### Defecto 4
-- Job y etapa: 
-- Problema que causa en el pipeline:
+- Job y etapa: sca, etapa pre-build
+- Problema que causa en el pipeline: El paso "Trivy" usa --include-dev-deps, por lo que también se evalúa @playwright/test, c9 y esbuild. En el Dockerfile se hace un npm prune --omit=ev antes de armar la imagen final por lo que ninguna dependencia se va al artefacto publicado. Esto causa que si se encuentra un hallazgo HIGH o CRITICAL puede bloquear la publicación de un artefacto que no contiene las dependencias, por lo que no es un riesgo real y hace perder tiempo tratando de diagnosticar o entender que pasó. 
 - Link al commit:
-- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests):
+- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Borrar la linea de include-dev-deps de sca.
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
+En /.github/workflows/ci.yml
+    - name: Trivy
+        run: |
+          docker run --rm \
+            --volume "$PWD:/src" \
+            --workdir /src \
+            ghcr.io/aquasecurity/trivy:0.76.1 fs \
+              --scanners vuln \
+              --include-dev-deps \
+              --severity HIGH,CRITICAL \
+              --exit-code 1 \
+              package-lock.json
+En Dockerfile:
+    RUN npm run build && npm prune --omit=dev
+
 ### Defecto 5
 - Job y etapa:
 - Problema que causa en el pipeline:
@@ -111,3 +126,5 @@ Decisión sobre sast (se queda / se mueve a otra etapa o evento / informativo) y
 
 ## Declaración de uso de IA
 Herramientas usadas y para qué:
+Se usó Claude chat antes del laboratorio para examinar todo el repositorio y, viendo la plantilla de RESPUESTAS.md, examinar los posibles defectos que habrían puesto que los laboratorios suelen manejarse así. La herramienta me dio posibles preguntas para el laboratorio y consejos acerca de qué hacer antes de iniciar. En particular, me ayudó a identificar el defecto 4, pues involucraba bastantes cosas. 
+
