@@ -69,11 +69,168 @@ En Dockerfile:
     RUN npm run build && npm prune --omit=dev
 
 ### Defecto 5
-- Job y etapa:
-- Problema que causa en el pipeline:
+- Job y etapa: integration, etapa pre-build. 
+- Problema que causa en el pipeline: Las pruebas de test/integration/transferir.test.js no son independientes del orden, ya que se da por hecho el estado que dejó la prueba anterior sobre la base semilla. En ci pasa inadvertido, pero en pruebas si se ejecuta 2 veces sobre la misma base las pruebas fallan.
 - Link al commit:
-- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests):
+- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Modificar los tests.
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
+Pruebas hechas: 
+@Setziret ➜ /workspaces/INF384-lab4-20171857 (main) $ node --test test/integration/transferir.test.js
+✔ ana transfiere 100 a beto (102.334467ms)
+✔ el saldo de ana refleja el debito (1.06617ms)
+✔ el saldo de beto refleja el credito (0.259225ms)
+✔ el historial de ana registra la transferencia (0.383278ms)
+✔ ana no puede transferir 950 (0.273135ms)
+✔ una transferencia rechazada no cambia saldos (0.289169ms)
+✔ diego transfiere todo su saldo a elena (0.405761ms)
+✔ diego sin saldo no puede transferir (0.302028ms)
+✔ el historial de elena muestra solo la transferencia de diego (0.339113ms)
+✔ transferir al mismo usuario es 422 (0.373293ms)
+✔ transferir a un usuario inexistente es 400 (1.433485ms)
+✔ un cuerpo que no es JSON es 400 (0.236841ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 344.675653
+@Setziret ➜ /workspaces/INF384-lab4-20171857 (main) $ node --test test/integration/transferir.test.js
+✖ ana transfiere 100 a beto (14.096351ms)
+✖ el saldo de ana refleja el debito (2.209025ms)
+✖ el saldo de beto refleja el credito (0.550846ms)
+✖ el historial de ana registra la transferencia (0.658346ms)
+✔ ana no puede transferir 950 (0.457998ms)
+✖ una transferencia rechazada no cambia saldos (0.456607ms)
+✖ diego transfiere todo su saldo a elena (0.488795ms)
+✔ diego sin saldo no puede transferir (0.334235ms)
+✔ el historial de elena muestra solo la transferencia de diego (2.022908ms)
+✔ transferir al mismo usuario es 422 (0.435976ms)
+✔ transferir a un usuario inexistente es 400 (0.328006ms)
+✔ un cuerpo que no es JSON es 400 (0.248088ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 6
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 182.326201
+
+✖ failing tests:
+
+test at test/integration/transferir.test.js:14:1
+✖ ana transfiere 100 a beto (14.096351ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  800 !== 900
+  
+      at TestContext.<anonymous> (/workspaces/INF384-lab4-20171857/test/integration/transferir.test.js:17:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 800,
+    expected: 900,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/integration/transferir.test.js:20:1
+✖ el saldo de ana refleja el debito (2.209025ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   saldo: 800,
+  -   saldo: 900,
+      usuario: 'ana'
+    }
+  
+      at TestContext.<anonymous> (/workspaces/INF384-lab4-20171857/test/integration/transferir.test.js:22:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { usuario: 'ana', saldo: 800 },
+    expected: { usuario: 'ana', saldo: 900 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/integration/transferir.test.js:25:1
+✖ el saldo de beto refleja el credito (0.550846ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   saldo: 700,
+  -   saldo: 600,
+      usuario: 'beto'
+    }
+  
+      at TestContext.<anonymous> (/workspaces/INF384-lab4-20171857/test/integration/transferir.test.js:27:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { usuario: 'beto', saldo: 700 },
+    expected: { usuario: 'beto', saldo: 600 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/integration/transferir.test.js:30:1
+✖ el historial de ana registra la transferencia (0.658346ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (/workspaces/INF384-lab4-20171857/test/integration/transferir.test.js:33:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/integration/transferir.test.js:44:1
+✖ una transferencia rechazada no cambia saldos (0.456607ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  800 !== 900
+  
+      at TestContext.<anonymous> (/workspaces/INF384-lab4-20171857/test/integration/transferir.test.js:47:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 800,
+    expected: 900,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/integration/transferir.test.js:51:1
+✖ diego transfiere todo su saldo a elena (0.488795ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  400 !== 200
+  
+      at TestContext.<anonymous> (/workspaces/INF384-lab4-20171857/test/integration/transferir.test.js:53:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 400,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
 
 ## Parte 2 · Implementación
 - Link al run en verde en main:
@@ -126,5 +283,6 @@ Decisión sobre sast (se queda / se mueve a otra etapa o evento / informativo) y
 
 ## Declaración de uso de IA
 Herramientas usadas y para qué:
-Se usó Claude chat antes del laboratorio para examinar todo el repositorio y, viendo la plantilla de RESPUESTAS.md, examinar los posibles defectos que habrían puesto que los laboratorios suelen manejarse así. La herramienta me dio posibles preguntas para el laboratorio y consejos acerca de qué hacer antes de iniciar. En particular, me ayudó a identificar el defecto 4, pues involucraba bastantes cosas. 
+- Se usó Claude chat antes del laboratorio para examinar todo el repositorio y, viendo la plantilla de RESPUESTAS.md, examinar los posibles defectos que habrían puesto que los laboratorios suelen manejarse así. La herramienta me dio posibles preguntas para el laboratorio y consejos acerca de qué hacer antes de iniciar. En particular, me ayudó a identificar el defecto 4, pues involucraba bastantes cosas. 
 
+- La IA también me dio una salida para solucionar el código de test/transferir.test.js, una vez que el defecto se encontró. 

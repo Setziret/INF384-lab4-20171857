@@ -1,6 +1,20 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { handler } = require('../../src/handler');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+
+const DB = path.join(os.tmpdir(), `wallet-test-${process.pid}-${Date.now()}.db`);
+process.env.DB_PATH = DB;
+
+const { handler } = require('../../src/handler');
+
+after(() => {
+  for (const sufijo of ['', '-wal', '-shm']) {
+    fs.rmSync(`${DB}${sufijo}`, { force: true });
+  }
+});
 
 async function llamar(metodo, ruta, cuerpo) {
   const r = await handler({
