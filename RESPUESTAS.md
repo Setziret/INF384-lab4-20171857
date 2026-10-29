@@ -237,8 +237,9 @@ test at test/integration/transferir.test.js:51:1
 - Link al run en verde en main: https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40965215830
 - Link al pull request:
 - Defecto de la aplicación introducido (archivo y descripción):
+const debitar = db.prepare('UPDATE usuarios SET saldo = saldo + ? WHERE id = ?');
 
-- Job que debería detenerlo: integration. Esto porque 
+- Job que debería detenerlo: integration. Esto porque las pruebas no reproducen un SQL real por lo que no pueden ver un cambio incorrecto. 
 - Link al run fallido:
 
 ## Parte 3 · Decisión bajo restricción
