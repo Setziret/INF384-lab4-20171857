@@ -256,7 +256,7 @@ const leerMovimientos = db.prepare(`
   LIMIT 50
 `);
 
-- Job que debería detenerlo: integration. Esto porque 
+- Job que debería detenerlo: integration. Esto porque como no se reproduce ninguna sentencia SQL real no se puede ver un ORDER BY incorrecto, por lo que al verificar el primer elemento devuelto debería fallar. 
 - Link al run fallido:
 
 ## Parte 3 · Decisión bajo restricción
