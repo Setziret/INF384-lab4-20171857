@@ -32,13 +32,23 @@ salud: {"ok":true,"version":"1.0.0","commit":"49ba49ebee84f4c9f8b694303159597031
 
 
 ### Defecto 3
-- Job y etapa:
-- Problema que causa en el pipeline:
+- Job y etapa: load, etapa post-deploy.
+- Problema que causa en el pipeline: En test/load/transferir.js se define un perfil de stages de 10 min por 30 usuarios virtuales y el load corre todos los eventos sin condiciones. Esto hace que se pierda tiempo y es lo que se ve cuando se corre el workflow, pues en load es donde más se demora. Esto impide pushear cambios continuos. 
 - Link al commit:
-- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests):
+- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Hacer que no corra en cada pull request, pero si en push a main o en workflow_dispatch. 
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
+Este es el primer run sin corregir el defecto, donde se ve que load demora como 12 minutos o más. 
+https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40956362754
+
+test/load/transferir.js
+export const options = {
+  stages: [
+    { duration: '1m', target: 30 },
+    { duration: '10m', target: 30 },
+    { duration: '1m', target: 0 },
+
 ### Defecto 4
-- Job y etapa:
+- Job y etapa: 
 - Problema que causa en el pipeline:
 - Link al commit:
 - Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests):
