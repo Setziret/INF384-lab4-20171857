@@ -42,7 +42,7 @@ function crearStore(db) {
     SELECT id, origen, destino, monto, fecha
     FROM movimientos
     WHERE origen = ? OR destino = ?
-    ORDER BY id DESC
+    ORDER BY id ASC
     LIMIT 50
   `);
   const debitar = db.prepare('UPDATE usuarios SET saldo = saldo - ? WHERE id = ?');
