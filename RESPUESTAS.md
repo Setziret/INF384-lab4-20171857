@@ -235,11 +235,12 @@ test at test/integration/transferir.test.js:51:1
 
 ## Parte 2 · Implementación
 - Link al run en verde en main: https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40965215830
-- Link al pull request:
+- Link al pull request: https://github.com/Setziret/INF384-lab4-20171857/pull/2
 - Defecto de la aplicación introducido (archivo y descripción):
+const debitar = db.prepare('UPDATE usuarios SET saldo = saldo + ? WHERE id = ?');
 
-- Job que debería detenerlo: integration. Esto porque 
-- Link al run fallido:
+- Job que debería detenerlo: integration. Esto porque las pruebas no reproducen un SQL real por lo que no pueden ver un cambio incorrecto. 
+- Link al run fallido: https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40969744764
 
 ## Parte 3 · Decisión bajo restricción
 Link al run medido: https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40965215830
