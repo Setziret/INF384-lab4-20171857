@@ -20,7 +20,7 @@ smoke:
 ### Defecto 2
 - Job y etapa: smoke, etapa post-deploy. 
 - Problema que causa en el pipeline: En test/smoke/smoke.sh se usa una variable llamada EXPECTED_COMMIT, que nunca aparece o se declara en smoke en ci.yml. Viendo como funciona el condicional, este bloque nunca se ejecuta por lo que la prueba de humo, aunque entrega un commit, este no necesariamente es el de la versión publicada, por lo que daria una falsa confianza. 
-- Link al commit:
+- Link al commit: https://github.com/Setziret/INF384-lab4-20171857/commit/bc02ba5fb7977e20cc9aa49c85cf70a3efd22192
 - Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Agregar EXPECTED_COMMIT: ${{github.sha}} a smoke en ci.yml. 
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
 
@@ -34,7 +34,7 @@ salud: {"ok":true,"version":"1.0.0","commit":"49ba49ebee84f4c9f8b694303159597031
 ### Defecto 3
 - Job y etapa: load, etapa post-deploy.
 - Problema que causa en el pipeline: En test/load/transferir.js se define un perfil de stages de 10 min por 30 usuarios virtuales y el load corre todos los eventos sin condiciones. Esto hace que se pierda tiempo y es lo que se ve cuando se corre el workflow, pues en load es donde más se demora. Esto impide pushear cambios continuos. 
-- Link al commit:
+- Link al commit: https://github.com/Setziret/INF384-lab4-20171857/commit/76ba7472c7c724d7fc80372bb735fa8ec2cc95c8
 - Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Hacer que no corra en cada pull request, pero si en push a main o en workflow_dispatch. 
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
 Este es el primer run sin corregir el defecto, donde se ve que load demora como 12 minutos o más. 
@@ -50,7 +50,7 @@ export const options = {
 ### Defecto 4
 - Job y etapa: sca, etapa pre-build
 - Problema que causa en el pipeline: El paso "Trivy" usa --include-dev-deps, por lo que también se evalúa @playwright/test, c9 y esbuild. En el Dockerfile se hace un npm prune --omit=ev antes de armar la imagen final por lo que ninguna dependencia se va al artefacto publicado. Esto causa que si se encuentra un hallazgo HIGH o CRITICAL puede bloquear la publicación de un artefacto que no contiene las dependencias, por lo que no es un riesgo real y hace perder tiempo tratando de diagnosticar o entender que pasó. 
-- Link al commit:
+- Link al commit: https://github.com/Setziret/INF384-lab4-20171857/commit/d9bdd710c838d2e37993fa5d85968dcce6f8a2bd
 - Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Borrar la linea de include-dev-deps de sca.
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
 En /.github/workflows/ci.yml
@@ -71,7 +71,8 @@ En Dockerfile:
 ### Defecto 5
 - Job y etapa: integration, etapa pre-build. 
 - Problema que causa en el pipeline: Las pruebas de test/integration/transferir.test.js no son independientes del orden, ya que se da por hecho el estado que dejó la prueba anterior sobre la base semilla. En ci pasa inadvertido, pero en pruebas si se ejecuta 2 veces sobre la misma base las pruebas fallan.
-- Link al commit:
+- Link al commit:https://github.com/Setziret/INF384-lab4-20171857/commit/81a7ded6147423cc3358e836b61d807d7511a995
+https://github.com/Setziret/INF384-lab4-20171857/commit/19eb1bcc16fa907add9cf7cc25cf4e4fcc0222a2
 - Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Modificar los tests.
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
 Pruebas hechas: 
@@ -236,7 +237,26 @@ test at test/integration/transferir.test.js:51:1
 - Link al run en verde en main:
 - Link al pull request:
 - Defecto de la aplicación introducido (archivo y descripción):
-- Job que debería detenerlo:
+Cambiar DESC por ASC
+// Antes en src/db.js 
+const leerMovimientos = db.prepare(`
+  SELECT id, origen, destino, monto, fecha
+  FROM movimientos
+  WHERE origen = ? OR destino = ?
+  ORDER BY id DESC
+  LIMIT 50
+`);
+
+// Despues en src/db.js
+const leerMovimientos = db.prepare(`
+  SELECT id, origen, destino, monto, fecha
+  FROM movimientos
+  WHERE origen = ? OR destino = ?
+  ORDER BY id ASC
+  LIMIT 50
+`);
+
+- Job que debería detenerlo: integration. Esto porque 
 - Link al run fallido:
 
 ## Parte 3 · Decisión bajo restricción
