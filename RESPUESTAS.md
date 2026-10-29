@@ -6,9 +6,10 @@ Presupuesto: [ 8 ] min  Métrica DORA: [ change failure rate ]
 ### Defecto 1
 - Job y etapa: smoke, deploy.
 - Problema que causa en el pipeline: smoke (y también e2e y load) no esperan a que deploy termine, por lo que pueden probar una versión no actualizada. Esto hace que se deje pasar un run verde que certificó un artefacto distinto al deploy que se acaba de publicar. 
-- Link al commit:
+- Link al commit: https://github.com/Setziret/INF384-lab4-20171857/commit/ca4ac24904b7a72a2950194dbfa73c90e9d24b61
 - Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Ajustar la configuración cambiando need build-push a need deploy. 
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
+https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40956362754
 En la gráfica de actions smoke y deploy son dos cajas separadas. 
 En ci.yml:
 deploy:
@@ -17,11 +18,19 @@ smoke:
   needs: build-push
 
 ### Defecto 2
-- Job y etapa:
-- Problema que causa en el pipeline:
+- Job y etapa: smoke, etapa post-deploy. 
+- Problema que causa en el pipeline: En test/smoke/smoke.sh se usa una variable llamada EXPECTED_COMMIT, que nunca aparece o se declara en smoke en ci.yml. Viendo como funciona el condicional, este bloque nunca se ejecuta por lo que la prueba de humo, aunque entrega un commit, este no necesariamente es el de la versión publicada, por lo que daria una falsa confianza. 
 - Link al commit:
-- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests):
+- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Agregar EXPECTED_COMMIT: ${{github.sha}} a smoke en ci.yml. 
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
+
+En #test/smoke/smoke.sh se ve: 
+    if [ -n "${EXPECTED_COMMIT:-}" ]; then
+
+No se llega a comparar el commit aunque se entregue uno, como se ve en el run. 
+salud: {"ok":true,"version":"1.0.0","commit":"49ba49ebee84f4c9f8b6943031595970311a3bb6"}
+
+
 ### Defecto 3
 - Job y etapa:
 - Problema que causa en el pipeline:
