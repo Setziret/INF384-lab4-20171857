@@ -1,14 +1,21 @@
 # Respuestas · Laboratorio 4
-Alumno: [código]
-Presupuesto: [ ] min  Métrica DORA: [ ]
+Alumno: [20171857]
+Presupuesto: [ 8 ] min  Métrica DORA: [ change failure rate ]
 
 ## Parte 1 · Diagnóstico
 ### Defecto 1
-- Job y etapa:
-- Problema que causa en el pipeline:
+- Job y etapa: smoke, deploy.
+- Problema que causa en el pipeline: smoke (y también e2e y load) no esperan a que deploy termine, por lo que pueden probar una versión no actualizada. Esto hace que se deje pasar un run verde que certificó un artefacto distinto al deploy que se acaba de publicar. 
 - Link al commit:
-- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests):
+- Corrección (una o más: mover de etapa / dejar como informativo / eliminar / ajustar configuración / modificar tests): Ajustar la configuración cambiando need build-push a need deploy. 
 - Evidencia (dato observado, con link al run o fragmento de la salida local):
+En la gráfica de actions smoke y deploy son dos cajas separadas. 
+En ci.yml:
+deploy:
+  needs: build-push
+smoke:
+  needs: build-push
+
 ### Defecto 2
 - Job y etapa:
 - Problema que causa en el pipeline:
