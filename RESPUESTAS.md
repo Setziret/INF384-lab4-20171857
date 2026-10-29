@@ -234,55 +234,37 @@ test at test/integration/transferir.test.js:51:1
   }
 
 ## Parte 2 · Implementación
-- Link al run en verde en main:
+- Link al run en verde en main: https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40965215830
 - Link al pull request:
 - Defecto de la aplicación introducido (archivo y descripción):
-Cambiar DESC por ASC
-// Antes en src/db.js 
-const leerMovimientos = db.prepare(`
-  SELECT id, origen, destino, monto, fecha
-  FROM movimientos
-  WHERE origen = ? OR destino = ?
-  ORDER BY id DESC
-  LIMIT 50
-`);
-
-// Despues en src/db.js
-const leerMovimientos = db.prepare(`
-  SELECT id, origen, destino, monto, fecha
-  FROM movimientos
-  WHERE origen = ? OR destino = ?
-  ORDER BY id ASC
-  LIMIT 50
-`);
 
 - Job que debería detenerlo: integration. Esto porque 
 - Link al run fallido:
 
 ## Parte 3 · Decisión bajo restricción
-Link al run medido:
+Link al run medido: https://github.com/Setziret/INF384-lab4-20171857/actions/runs/40965215830
 
 | Job | Duración (min:seg) |
 |---|---|
-| unit | |
-| integration | |
-| sast | |
-| sca | |
-| build-push | |
-| deploy | |
-| smoke | |
-| e2e | |
-| load | |
-| **Total** | |
+| unit | 00:11 |
+| integration | 00:12 |
+| sast | 00:20 |
+| sca | 00:19 |
+| build-push | 00:48 |
+| deploy | 00:17 |
+| smoke | 00:09 |
+| e2e | 00:36 |
+| load | 12:11 |
+| **Total** | 13:58 |
 
 Resultado de load en ese run:
 | Métrica | Valor |
 |---|---|
-| p90 | |
-| p95 | |
-| Máximo | |
-| Tasa de error | |
-| Requests por segundo | |
+| p90 | 50.7 ms |
+| p95 | 52.59 ms |
+| Máximo | 247.29 ms |
+| Tasa de error | 0.00% |
+| Requests por segundo | 50.36 req/s |
 
 Conclusión sobre el comportamiento bajo carga:
 
