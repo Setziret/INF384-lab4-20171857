@@ -285,4 +285,4 @@ Decisión sobre sast (se queda / se mueve a otra etapa o evento / informativo) y
 Herramientas usadas y para qué:
 - Se usó Claude chat antes del laboratorio para examinar todo el repositorio y, viendo la plantilla de RESPUESTAS.md, examinar los posibles defectos que habrían puesto que los laboratorios suelen manejarse así. La herramienta me dio posibles preguntas para el laboratorio y consejos acerca de qué hacer antes de iniciar. En particular, me ayudó a identificar el defecto 4, pues involucraba bastantes cosas. 
 
-- La IA también me dio una salida para solucionar el código de test/transferir.test.js, una vez que el defecto se encontró. 
+- La IA también me dio una salida para solucionar el código de test/transferir.test.js, una vez que el defecto se encontró. Además, en la modificación de transfer me equivoqué y el job de integracion falló, por lo que me ayudó a ver que pasaba cuando le envié el mensaje de error. 

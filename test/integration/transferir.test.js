@@ -1,6 +1,5 @@
-const { test } = require('node:test');
+const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { handler } = require('../../src/handler');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
